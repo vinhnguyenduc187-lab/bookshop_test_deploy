@@ -2,12 +2,14 @@ package vn.edu.iuh.fit.bookshop_be.configs;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import vn.edu.iuh.fit.bookshop_be.models.Category;
+import vn.edu.iuh.fit.bookshop_be.models.Customer;
 import vn.edu.iuh.fit.bookshop_be.models.Employee;
 import vn.edu.iuh.fit.bookshop_be.models.Role;
 import vn.edu.iuh.fit.bookshop_be.repositories.CategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
+import vn.edu.iuh.fit.bookshop_be.repositories.CustomerRepository;
 import vn.edu.iuh.fit.bookshop_be.repositories.EmployeeRepository;
 
 import java.util.ArrayList;
@@ -21,6 +23,9 @@ public class DataInitializer implements CommandLineRunner {
 
     @Autowired
     private EmployeeRepository employeeRepository;
+
+    @Autowired
+    private CustomerRepository customerRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -208,14 +213,39 @@ public class DataInitializer implements CommandLineRunner {
 
         if (employeeRepository.count() == 0) {
             // Tạo tài khoản quản lý mặc định
-            Employee admin = new Employee();
-            admin.setUsername("Admin");
-            admin.setEmail("admin@gmail.com");
-            admin.setPasswordHash(passwordEncoder.encode("123456")); // Mật khẩu sẽ được mã hóa trong
-            admin.setPhone("0123456789");
-            admin.setActive(true);
-            admin.setRole(Role.MANAGER);
-            employeeRepository.save(admin);
+            Employee manager = new Employee();
+            manager.setUsername("Manager");
+            manager.setEmail("manager@gmail.com");
+            manager.setPasswordHash(passwordEncoder.encode("123456")); // Mật khẩu sẽ được mã hóa trong
+            manager.setPhone("0123456789");
+            manager.setActive(true);
+            manager.setRole(Role.MANAGER);
+            employeeRepository.save(manager);
+
+
+            Employee staff = new Employee();
+            staff.setUsername("Staff");
+            staff.setEmail("staff@gmail.com");
+            staff.setPasswordHash(passwordEncoder.encode("123456")); // Mật khẩu sẽ được mã hóa trong
+            staff.setPhone("0123456789");
+            staff.setActive(true);
+            staff.setRole(Role.STAFF);
+            employeeRepository.save(staff);
+        }
+
+        if (customerRepository.count() == 0) {
+            // Tạo tài khoản quản lý mặc định
+            Customer customer = new Customer();
+            customer.setUsername("customer");
+            customer.setEmail("customer@gmail.com");
+            customer.setVerificationCode(null);
+            customer.setActive(true);
+            customer.setEnabled(true);
+            customer.setPasswordHash(passwordEncoder.encode("123456")); // Mật khẩu sẽ được mã hóa trong
+            customer.setPhone("0123456789");
+            customer.setActive(true);
+            customer.setRole(Role.CUSTOMER);
+            customerRepository.save(customer);
         }
     }
 }
