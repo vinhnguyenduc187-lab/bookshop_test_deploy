@@ -33,8 +33,8 @@ public class OrderController{
         this.productService = productService;
     }
 
-    @Value("${base_url_FE}")
-    private String baseUrlFE;
+//    @Value("${base_url_FE}")
+    private String baseUrlFE = "https://book-test-59nk.vercel.app/";
 
     /**
      * Đặt hàng
