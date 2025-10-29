@@ -1,5 +1,6 @@
 package vn.edu.iuh.fit.bookshop_be.controllers;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -31,6 +32,9 @@ public class OrderController{
         this.vNPayService = vNPayService;
         this.productService = productService;
     }
+
+    @Value("${base_url_FE}")
+    private String baseUrlFE;
 
     /**
      * Đặt hàng
@@ -289,29 +293,28 @@ public class OrderController{
     public RedirectView getThankYouPage(
             @RequestParam("vnp_ResponseCode") Optional<String> vnpayResponseCode,
             @RequestParam("vnp_TxnRef") Optional<String> paymentRef) {
+
         Order order = orderService.findByPaymentRef(paymentRef.orElse(""));
-        String redirectUrl;
         if (order == null) {
-            return null;
+            return new RedirectView(baseUrlFE + "/order-result?status=fail");
         }
+
+        String redirectUrl;
         if (vnpayResponseCode.isPresent() && paymentRef.isPresent()) {
-            // thanh toán qua VNPAY, cập nhật trạng thái order
-            if(vnpayResponseCode.get().equals("00")) {
+            if (vnpayResponseCode.get().equals("00")) {
                 order.setPaymentStatus(PaymentStatus.PAID);
                 order.setStatus(OrderStatus.PENDING);
                 orderService.save(order);
-                redirectUrl = "http://localhost:5173/order-result?status=success&orderId=" + order.getId();
-                return new RedirectView(redirectUrl);
+                redirectUrl = baseUrlFE + "/order-result?status=success&orderId=" + order.getId();
             } else {
                 order.setPaymentStatus(PaymentStatus.FAILED);
                 orderService.save(order);
-                redirectUrl = "http://localhost:5173/order-result?status=fail&orderId=" + order.getId();
-                return new RedirectView(redirectUrl);
+                redirectUrl = baseUrlFE + "/order-result?status=fail&orderId=" + order.getId();
             }
-
+            return new RedirectView(redirectUrl);
         }
 
-        redirectUrl = "http://localhost:5173/order-result?status=fail&orderId=" + order.getId();
+        redirectUrl = baseUrlFE + "/order-result?status=fail&orderId=" + order.getId();
         return new RedirectView(redirectUrl);
     }
 
