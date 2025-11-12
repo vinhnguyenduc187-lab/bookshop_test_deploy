@@ -44,7 +44,7 @@ public class CustomerService {
     private String baseUrl;
 
 
-    @Value("${spring.mail.username}")
+    @Value("${app.mail.from}")
     private String fromEmail;
 
     public Customer save(Customer customer) {
